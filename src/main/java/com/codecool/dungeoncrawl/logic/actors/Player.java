@@ -17,6 +17,10 @@ public class Player extends Actor {
         inventory = new Inventory();
     }
 
+    @Override
+    public String getName() {
+        return null;
+    }
 
     public Inventory getInventory() {
         return inventory;

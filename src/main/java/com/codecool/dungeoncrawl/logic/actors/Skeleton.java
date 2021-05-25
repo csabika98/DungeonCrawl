@@ -8,6 +8,11 @@ public class Skeleton extends Actor {
     }
 
     @Override
+    public String getName() {
+        return null;
+    }
+
+    @Override
     public String getTileName() {
         return "skeleton";
     }
