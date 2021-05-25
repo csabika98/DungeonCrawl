@@ -251,14 +251,9 @@ public class Main extends Application {
         TilePane r = new TilePane();
         TextInputDialog td = new TextInputDialog("enter any text");
         td.setHeaderText("enter your name");
-        // create a scene
-        //Scene sc = new Scene(r, 500, 300);
-
-        // set the scene
-        //s.setScene(sc);
-
+        Optional<String> result = td.showAndWait();
         s.show();
-        td.show();
+
 
     }
 
