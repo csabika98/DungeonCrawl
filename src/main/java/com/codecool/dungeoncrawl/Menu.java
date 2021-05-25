@@ -8,6 +8,8 @@ import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -16,6 +18,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
@@ -48,6 +51,15 @@ public class Menu {
         root.setPrefSize(900, 600);
 
         Rectangle bg = new Rectangle(900, 600);
+        //secondary rectangle to fade the background to black
+        Rectangle bgBlack = new Rectangle(900,600);
+        bgBlack.setFill(Color.BLACK);
+        bgBlack.setBlendMode(BlendMode.MULTIPLY);
+        //create a texture inside the rectangle and repeat it in a pattern
+        Image texturePattern = new Image("bgPattern.png");
+        ImagePattern bgPattern = new ImagePattern(texturePattern,10,10, 20, 20, false);
+        bg.setFill(bgPattern);
+        bg.setOpacity(0.2);
         ContentFrame frame = new ContentFrame(createIconContent());
 
         HBox hbox = new HBox(15, frame);
@@ -75,7 +87,7 @@ public class Menu {
 
         getMenuItem(0).setActive(true);
 
-        root.getChildren().addAll(bg, hbox, menuBox, about);
+        root.getChildren().addAll(bgBlack,bg, hbox, menuBox, about);
         return root;
     }
 
