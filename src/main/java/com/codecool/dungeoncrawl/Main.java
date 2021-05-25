@@ -141,17 +141,17 @@ public class Main extends Application {
 
         if (event.getCode() == KeyCode.ENTER) {
             Menu.MenuItem item = menu.getMenuItem(menu.getCurrentItem());
-            System.out.println(item.getText().getText());
             //read the menu text, 1.getteer for the text object 2.for reading the text object as string format
             switch (item.getText().getText()) {
                 case "New game":
                     System.out.println("new game");
-
+                    //TODO : switch scene to new game
                     break;
                 case "Load game":
                     System.out.println("load game");
+                    //TODO : switch scene to loaded game
                     break;
-                case "EXIT":
+                case "Exit":
                     System.exit(-1);
                     break;
             }

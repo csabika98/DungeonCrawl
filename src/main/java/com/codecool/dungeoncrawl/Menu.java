@@ -20,22 +20,20 @@ import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class Menu {
 
-    private static final Font FONT = Font.font("", FontWeight.BOLD, 18);
-
     private VBox menuBox;
     private int currentItem = 0;
-
-    private int messages = 0;
 
     public int getCurrentItem() {
         return currentItem;
@@ -45,38 +43,35 @@ public class Menu {
         return menuBox;
     }
 
-    private ScheduledExecutorService bgThread = Executors.newSingleThreadScheduledExecutor();
-
     public Parent createContent() {
         Pane root = new Pane();
         root.setPrefSize(900, 600);
 
         Rectangle bg = new Rectangle(900, 600);
+        ContentFrame frame = new ContentFrame(createIconContent());
 
-        ContentFrame frame1 = new ContentFrame(createLeftContent());
-        ContentFrame frame2 = new ContentFrame(createMiddleContent());
-        ContentFrame frame3 = new ContentFrame(createRightContent());
+        HBox hbox = new HBox(15, frame);
 
-        HBox hbox = new HBox(15, frame1, frame2, frame3);
-        hbox.setTranslateX(120);
+        hbox.setTranslateX(350);
         hbox.setTranslateY(50);
 
-        MenuItem itemExit = new MenuItem("EXIT");
+        MenuItem itemExit = new MenuItem("Exit");
 
         menuBox = new VBox(10,
                 new MenuItem("New game"),
                 new MenuItem("Load game"),
                 itemExit);
         menuBox.setAlignment(Pos.TOP_CENTER);
-        menuBox.setTranslateX(360);
+        menuBox.setTranslateX(255);
         menuBox.setTranslateY(300);
 
         Text about = new Text("Dungeon Crawler");
         about.setTranslateX(50);
         about.setTranslateY(500);
         about.setFill(Color.WHITE);
-        about.setFont(FONT);
-        about.setOpacity(0.2);
+        about.setFont(Font.loadFont(Objects.requireNonNull(App.class.getResource("/fonts/Minecraft.ttf")).toExternalForm(), 0));
+        about.setOpacity(0.4);
+        about.setStyle("-fx-font-size: 35");
 
         getMenuItem(0).setActive(true);
 
@@ -84,61 +79,7 @@ public class Menu {
         return root;
     }
 
-    private Node createLeftContent() {
-        final Text inbox = new Text("You have " + messages + " new message(-s)");
-        inbox.setFill(Color.WHITE);
-
-        bgThread.scheduleAtFixedRate(() -> {
-            Platform.runLater(() -> {
-                TranslateTransition tt = new TranslateTransition(Duration.seconds(0.5), inbox);
-                tt.setToY(150);
-
-                FadeTransition ft = new FadeTransition(Duration.seconds(0.5), inbox);
-                ft.setToValue(0);
-
-                ParallelTransition pt = new ParallelTransition(tt, ft);
-                pt.setOnFinished(e -> {
-                    inbox.setTranslateY(-150);
-                    inbox.setText("You have " + ++messages + " new message(-s)");
-
-                    TranslateTransition tt2 = new TranslateTransition(Duration.seconds(0.5), inbox);
-                    tt2.setToY(0);
-
-                    FadeTransition ft2 = new FadeTransition(Duration.seconds(0.5), inbox);
-                    ft2.setToValue(1);
-
-                    ParallelTransition pt2 = new ParallelTransition(tt2, ft2);
-                    pt2.play();
-                });
-                pt.play();
-            });
-        }, 2, 5, TimeUnit.SECONDS);
-
-        return inbox;
-    }
-
-    private Node createMiddleContent() {
-        String title = "MKX Menu App";
-        HBox letters = new HBox(0);
-        letters.setAlignment(Pos.CENTER);
-        for (int i = 0; i < title.length(); i++) {
-            Text letter = new Text(title.charAt(i) + "");
-            letter.setFont(FONT);
-            letter.setFill(Color.WHITE);
-            letters.getChildren().add(letter);
-
-            TranslateTransition tt = new TranslateTransition(Duration.seconds(2), letter);
-            tt.setDelay(Duration.millis(i * 50));
-            tt.setToY(-25);
-            tt.setAutoReverse(true);
-            tt.setCycleCount(TranslateTransition.INDEFINITE);
-            tt.play();
-        }
-
-        return letters;
-    }
-
-    private Node createRightContent() {
+    private Node createIconContent() {
         Image icon = new Image("icon.png");
         ImageView imageView = new ImageView(icon);
 
@@ -175,21 +116,26 @@ public class Menu {
     }
 
     public static class MenuItem extends HBox {
-        private TriCircle c1 = new TriCircle(), c2 = new TriCircle();
+        private ImageView c1 = new ImageView(new Image("menu_left_arrow.png", 50, 50, false, false));
+        private ImageView c2 = new ImageView(new Image("menu_right_arrow.png", 50, 50, false, false));
         private Text text;
 
         public MenuItem(String name) {
-            super(15);
+            super(40);
             setAlignment(Pos.CENTER);
 
             text = new Text(name);
-            text.setFont(Font.loadFont("resources/fonts/Minecraft.ttf", 240));
+            //load custom font from font folder
+            text.setFont(Font.loadFont(Objects.requireNonNull(App.class.getResource("/fonts/Minecraft.ttf")).toExternalForm(), 0));
+            //custom css styling for font size
+            text.setStyle("-fx-font-size: 40;");
 
             getChildren().addAll(c1, text, c2);
             setActive(false);
         }
 
         public Text getText() {
+            //get current pointing button text object to read the text
             return text;
         }
 
