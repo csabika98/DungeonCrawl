@@ -2,16 +2,15 @@ package com.codecool.dungeoncrawl;
 
 import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
+import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.effect.GaussianBlur;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -23,7 +22,6 @@ import javafx.scene.shape.Shape;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.concurrent.Executors;
@@ -141,25 +139,18 @@ public class Menu {
     }
 
     private Node createRightContent() {
-        String title = "Please Subscribe :)";
-        HBox letters = new HBox(0);
-        letters.setAlignment(Pos.CENTER);
-        for (int i = 0; i < title.length(); i++) {
-            Text letter = new Text(title.charAt(i) + "");
-            letter.setFont(FONT);
-            letter.setFill(Color.WHITE);
-            letter.setOpacity(0);
-            letters.getChildren().add(letter);
+        Image icon = new Image("icon.png");
+        ImageView imageView = new ImageView(icon);
 
-            FadeTransition ft = new FadeTransition(Duration.seconds(2), letter);
-            ft.setDelay(Duration.millis(i * 50));
-            ft.setToValue(1);
-            ft.setAutoReverse(true);
-            ft.setCycleCount(TranslateTransition.INDEFINITE);
-            ft.play();
-        }
+        ScaleTransition st = new ScaleTransition(Duration.millis(2000), imageView);
+        st.setByX(.3);
+        st.setByY(.3);
+        st.setCycleCount(ScaleTransition.INDEFINITE);
+        st.setAutoReverse(true);
 
-        return letters;
+        st.play();
+
+        return imageView;
     }
 
     public MenuItem getMenuItem(int index) {
@@ -192,8 +183,7 @@ public class Menu {
             setAlignment(Pos.CENTER);
 
             text = new Text(name);
-            text.setFont(FONT);
-            text.setEffect(new GaussianBlur(2));
+            text.setFont(Font.loadFont("resources/fonts/Minecraft.ttf", 240));
 
             getChildren().addAll(c1, text, c2);
             setActive(false);
