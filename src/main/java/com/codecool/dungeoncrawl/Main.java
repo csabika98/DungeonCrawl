@@ -16,23 +16,21 @@ import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import com.codecool.dungeoncrawl.logic.Mapmanager;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
+import javafx.scene.control.*;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -95,6 +93,7 @@ public class Main extends Application {
 
         Scene scene = new Scene(borderPane);
         primaryStage.setScene(scene);
+        textdialog(primaryStage);
         updatePlayerState();
         refresh();
         //scene.setOnKeyPressed(this::onKeyPressed);
@@ -245,6 +244,22 @@ public class Main extends Application {
             map.getCell(x, y).setActor(null);
 
         }
+    }
+
+    public void textdialog(Stage s){
+        s.setTitle("creating textInput dialog");
+        TilePane r = new TilePane();
+        TextInputDialog td = new TextInputDialog("enter any text");
+        td.setHeaderText("enter your name");
+        // create a scene
+        //Scene sc = new Scene(r, 500, 300);
+
+        // set the scene
+        //s.setScene(sc);
+
+        s.show();
+        td.show();
+
     }
 
     private void checkChest() {
