@@ -15,20 +15,32 @@ import com.codecool.dungeoncrawl.logic.Mapmanager;
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.w3c.dom.Text;
 
+import java.awt.*;
 import java.util.List;
 
 public class Main extends Application {
+    public static boolean halfCtrlSPressed = false;
     Cell cell;
     GameMap map = MapLoader.loadMap("/map.txt");
 
@@ -82,12 +94,13 @@ public class Main extends Application {
         primaryStage.setScene(scene);
         updatePlayerState();
         refresh();
-        scene.setOnKeyPressed(this::onKeyPressed);
+        //scene.setOnKeyPressed(this::onKeyPressed);
+        scene.setOnKeyPressed(this::savekey);
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
 
-    private void onKeyPressed(KeyEvent keyEvent) {
+    /*private void onKeyPressed(KeyEvent keyEvent) {
         switch (keyEvent.getCode()) {
             case W:
                 map.getPlayer().move(0, -1, map.getPlayer().getisInvisible());
@@ -124,8 +137,62 @@ public class Main extends Application {
                 break;
 
         }
-
     }
+
+     */
+
+    public void savekey(KeyEvent keyEvent) {
+        if (keyEvent.getCode().getName().equals("W")) {
+            map.getPlayer().move(0, -1, map.getPlayer().getisInvisible());
+            refresh();
+        }
+        if (keyEvent.getCode().getName().equals("S")) {
+            map.getPlayer().move(0, 1, map.getPlayer().getisInvisible());
+            refresh();
+        }
+        if (keyEvent.getCode().getName().equals("A")) {
+            map.getPlayer().move(-1, 0, map.getPlayer().getisInvisible());
+            refresh();
+        }
+        if (keyEvent.getCode().getName().equals("D")) {
+            map.getPlayer().move(1, 0, map.getPlayer().getisInvisible());
+            refresh();
+        }
+        if (keyEvent.getCode().getName().equals("E")) {
+            if (map.getPlayer().getCell().getItem() != null) {
+                pickItem(map.getPlayer().getCell().getItem());
+            } else {
+                checkChest();
+            }
+        }
+        if (keyEvent.getCode().getName().equals("Q")) {
+            map.getPlayer().setisInvisible(!map.getPlayer().getisInvisible());
+            isLight = !isLight;
+            updatePlayerState();
+            refresh();
+        }
+        if (keyEvent.getCode().getName().equals("R")) {
+            checkEnemy();
+            refresh();
+        }
+        if (keyEvent.getCode().getName().equals("Ctrl")) {
+            halfCtrlSPressed = true;
+        } else if (keyEvent.getCode().getName().equals("S") && halfCtrlSPressed) {
+            halfCtrlSPressed = false;
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you wanna save the game?", ButtonType.OK);
+            alert.setTitle("Saving Menu");
+            alert.setHeaderText("Saving Menu");
+            alert.getButtonTypes().add(ButtonType.CANCEL);
+            //if(alert.getButtonTypes().add(ButtonType.OK)){ ///
+                // SAVING THE GAME
+           // } //
+            alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+            alert.show();
+        }
+    }
+
+
+
 
     private void checkEnemy() {
         Cell skeletonCell = null;
