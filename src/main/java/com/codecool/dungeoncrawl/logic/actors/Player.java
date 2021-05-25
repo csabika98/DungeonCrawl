@@ -8,6 +8,7 @@ import java.util.Map;
 
 public class Player extends Actor {
     Inventory inventory;
+    private String name= "Kecske";
     private int shieldDuration = 0;
     private String playerState = "player";
     private boolean isInvisible = false;
@@ -19,7 +20,7 @@ public class Player extends Actor {
 
     @Override
     public String getName() {
-        return null;
+        return name;
     }
 
     public Inventory getInventory() {

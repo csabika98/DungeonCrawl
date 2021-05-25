@@ -10,6 +10,7 @@ import com.codecool.dungeoncrawl.logic.Items.Item;
 import com.codecool.dungeoncrawl.logic.Items.WeaponItem;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 
+import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 
 import com.codecool.dungeoncrawl.logic.Mapmanager;
@@ -60,12 +61,6 @@ public class Main extends Application {
     Label shieldLabel = new Label();
 
     public static void main(String[] args) {
-        GameDatabaseManager gdm = new GameDatabaseManager();
-        try {
-            gdm.setup();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
         launch(args);
     }
 
@@ -187,7 +182,7 @@ public class Main extends Application {
             halfCtrlSPressed = true;
         } else if (keyEvent.getCode().getName().equals("S") && halfCtrlSPressed) {
             halfCtrlSPressed = false;
-            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you wanna save the game?", ButtonType.OK);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION, "Do you wanna save the game?");
             alert.setTitle("Saving Menu");
             alert.setHeaderText("Saving Menu");
             alert.getButtonTypes().add(ButtonType.CANCEL);
@@ -198,18 +193,20 @@ public class Main extends Application {
             if (button == ButtonType.OK) {
 //                System.out.println("Ok pressed");
                 // SAVING THE GAME
-//                GameDatabaseManager gdm = new GameDatabaseManager();
-//                try {
-//                    gdm.setup();
-//                } catch (Exception e) {
-//                    System.out.println(e);
-//                }
+                GameDatabaseManager gdm = new GameDatabaseManager();
+                try {
+                    gdm.setup();
+                    Player p = map.getPlayer();
+                    gdm.savePlayer(p);
+                } catch (Exception e) {
+                    System.out.println(e);
+                }
             } else {
                 System.out.println("canceled");
             }
 
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-            alert.show();
+//            alert.show();
         }
     }
 
