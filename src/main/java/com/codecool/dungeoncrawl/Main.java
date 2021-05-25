@@ -16,6 +16,7 @@ import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import com.codecool.dungeoncrawl.logic.Mapmanager;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -34,6 +35,7 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import org.w3c.dom.Text;
 
 import java.awt.*;
@@ -46,6 +48,7 @@ public class Main extends Application {
     GameMap map = MapLoader.loadMap("/map.txt");
 
     Mapmanager mapManager = new Mapmanager();
+    Menu menu = new Menu();
 
     ListView<String> inventory = new ListView();
     public static double colr;
@@ -91,15 +94,72 @@ public class Main extends Application {
         borderPane.setCenter(canvas);
         borderPane.setRight(ui);
 
-        Scene scene = new Scene(borderPane);
-        primaryStage.setScene(scene);
+        //handle window closing by hand
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
+
+        Scene gameScene = new Scene(borderPane);
+        //new scene for menu, to switch between the game and ui
+        Scene menuScene = new Scene(menu.createContent());
+        primaryStage.setScene(menuScene);
         textdialog(primaryStage);
         updatePlayerState();
         refresh();
         //scene.setOnKeyPressed(this::onKeyPressed);
-        scene.setOnKeyPressed(this::savekey);
+        if (primaryStage.getScene() != menuScene) {
+            gameScene.setOnKeyPressed(this::savekey);
+        } else {
+            menuScene.setOnKeyPressed(this::menuKey);
+        }
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+    }
+
+    private void menuKey(KeyEvent event) {
+        int currentItem = menu.getCurrentItem();
+        if (event.getCode() == KeyCode.UP) {
+            if (currentItem > 0) {
+                menu.getMenuItem(menu.getCurrentItem()).setActive(false);
+                menu.getMenuItem(--currentItem).setActive(true);
+                menu.setCurrentItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.DOWN) {
+            if (currentItem < menu.getMenuBox().getChildren().size() - 1) {
+                menu.getMenuItem(menu.getCurrentItem()).setActive(false);
+                menu.getMenuItem(++currentItem).setActive(true);
+                menu.setCurrentItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.ENTER) {
+            Menu.MenuItem item = menu.getMenuItem(menu.getCurrentItem());
+            System.out.println(item.getText().getText());
+            //read the menu text, 1.getteer for the text object 2.for reading the text object as string format
+            switch (item.getText().getText()) {
+                case "New game":
+                    System.out.println("new game");
+
+                    break;
+                case "Load game":
+                    System.out.println("load game");
+                    break;
+                case "EXIT":
+                    System.exit(-1);
+                    break;
+            }
+        }
+    }
+
+    private void setScene(Scene scene) {
+
     }
 
     /*private void onKeyPressed(KeyEvent keyEvent) {
@@ -246,7 +306,7 @@ public class Main extends Application {
         }
     }
 
-    public void textdialog(Stage s){
+    public void textdialog(Stage s) {
         s.setTitle("creating textInput dialog");
         TilePane r = new TilePane();
         TextInputDialog td = new TextInputDialog("enter any text");
