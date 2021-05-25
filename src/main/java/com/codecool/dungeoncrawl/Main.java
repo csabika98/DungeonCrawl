@@ -1,5 +1,6 @@
 package com.codecool.dungeoncrawl;
 
+import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.GameMap;
@@ -38,6 +39,7 @@ import org.w3c.dom.Text;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Optional;
 
 public class Main extends Application {
     public static boolean halfCtrlSPressed = false;
@@ -58,6 +60,12 @@ public class Main extends Application {
     Label shieldLabel = new Label();
 
     public static void main(String[] args) {
+        GameDatabaseManager gdm = new GameDatabaseManager();
+        try {
+            gdm.setup();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
         launch(args);
     }
 
@@ -183,15 +191,27 @@ public class Main extends Application {
             alert.setTitle("Saving Menu");
             alert.setHeaderText("Saving Menu");
             alert.getButtonTypes().add(ButtonType.CANCEL);
-            //if(alert.getButtonTypes().add(ButtonType.OK)){ ///
+//            alert.getButtonTypes().add(ButtonType.OK);
+            Optional<ButtonType> result = alert.showAndWait();
+            ButtonType button = result.orElse(ButtonType.CANCEL);
+
+            if (button == ButtonType.OK) {
+//                System.out.println("Ok pressed");
                 // SAVING THE GAME
-           // } //
+//                GameDatabaseManager gdm = new GameDatabaseManager();
+//                try {
+//                    gdm.setup();
+//                } catch (Exception e) {
+//                    System.out.println(e);
+//                }
+            } else {
+                System.out.println("canceled");
+            }
+
             alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
             alert.show();
         }
     }
-
-
 
 
     private void checkEnemy() {
@@ -255,9 +275,11 @@ public class Main extends Application {
 
         }
     }
-    private boolean checkNextLevel(){
+
+    private boolean checkNextLevel() {
         return map.getPlayer().getCell().getTileName().equals("Door");
     }
+
     private void pickItem(Item item) {
         switch (item.getTileName()) {
             case "Pavise":
@@ -379,7 +401,7 @@ public class Main extends Application {
     }
 
     private void refresh() {
-        if(checkNextLevel()) {
+        if (checkNextLevel()) {
             Mapmanager mapManager = new Mapmanager();
             mapManager.setMap("/map2.txt");
             map = mapManager.getMap();
@@ -388,28 +410,28 @@ public class Main extends Application {
         int playerX = map.getPlayer().getX();
         int playerY = map.getPlayer().getY();
         List<Skeleton> skeletonList = map.getSkeletons();
-        for (Skeleton skeleton: skeletonList) {
-            if(skeleton.getHealth() == 5){
+        for (Skeleton skeleton : skeletonList) {
+            if (skeleton.getHealth() == 5) {
                 int skeletonX = skeleton.getX();
                 int skeletonY = skeleton.getY();
                 int moveX;
                 int moveY;
-                if (Math.abs(skeletonX -playerX) > Math.abs(skeletonY -playerY)){
-                    if(playerX > skeletonX){
-                        moveX=1;
+                if (Math.abs(skeletonX - playerX) > Math.abs(skeletonY - playerY)) {
+                    if (playerX > skeletonX) {
+                        moveX = 1;
                     } else {
-                        moveX=-1;
+                        moveX = -1;
                     }
                     moveY = 0;
                 } else {
-                    if(playerY > skeletonY){
+                    if (playerY > skeletonY) {
                         moveY = 1;
                     } else {
                         moveY = -1;
                     }
                     moveX = 0;
                 }
-                skeleton.move(moveX,moveY, false);
+                skeleton.move(moveX, moveY, false);
             }
         }
         context.setFill(Color.rgb(71, 45, 60));
