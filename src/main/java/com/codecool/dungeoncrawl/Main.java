@@ -252,6 +252,9 @@ public class Main extends Application {
         TextInputDialog td = new TextInputDialog("enter any text");
         td.setHeaderText("enter your name");
         Optional<String> result = td.showAndWait();
+        result.ifPresent(string -> {
+            map.getPlayer().setName(string);
+        });
         s.show();
 
 
