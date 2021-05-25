@@ -1,5 +1,6 @@
 package com.codecool.dungeoncrawl;
 
+import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.GameMap;
@@ -26,6 +27,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
+import java.sql.SQLException;
 import java.util.List;
 
 public class Main extends Application {
@@ -46,6 +48,12 @@ public class Main extends Application {
     Label shieldLabel = new Label();
 
     public static void main(String[] args) {
+        GameDatabaseManager gdm = new GameDatabaseManager();
+        try {
+            gdm.setup();
+        } catch (Exception e){
+            System.out.println(e);
+        }
         launch(args);
     }
 
