@@ -4,15 +4,20 @@ import javafx.animation.FadeTransition;
 import javafx.animation.ParallelTransition;
 import javafx.animation.ScaleTransition;
 import javafx.animation.TranslateTransition;
+import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
@@ -26,6 +31,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontSmoothingType;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 
 import java.util.Objects;
@@ -33,7 +40,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class Menu {
+public class Menu extends Application {
 
     private VBox menuBox;
     private int currentItem = 0;
@@ -44,6 +51,45 @@ public class Menu {
 
     public VBox getMenuBox() {
         return menuBox;
+    }
+    private void menuKey(KeyEvent event) {
+        if (event.getCode() == KeyCode.UP) {
+            if (currentItem > 0) {
+                getMenuItem(currentItem).setActive(false);
+                getMenuItem(--currentItem).setActive(true);
+                getMenuItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.DOWN) {
+            if (currentItem < menuBox.getChildren().size() - 1) {
+                getMenuItem(currentItem).setActive(false);
+                getMenuItem(++currentItem).setActive(true);
+                getMenuItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.ENTER) {
+            MenuItem item = getMenuItem(currentItem);
+            //read the menu text, 1.getteer for the text object 2.for reading the text object as string format
+            switch (item.getText().getText()) {
+                case "New game":
+                    System.out.println("new game");
+                    //TODO : switch scene to new game
+                    break;
+                case "Load game":
+                    System.out.println("load game");
+                    //TODO : switch scene to loaded game
+                    break;
+                case "Exit":
+                    System.exit(-1);
+                    break;
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        launch(args);
     }
 
     public Parent createContent() {
@@ -112,6 +158,24 @@ public class Menu {
 
     public void setCurrentItem(int currentItem) {
         this.currentItem = currentItem;
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+        Scene scene = new Scene(createContent());
+        stage.setScene(scene);
+
+        stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
+        scene.setOnKeyPressed(this::menuKey);
+        stage.setTitle("Dungeon Crawl");
+        stage.show();
     }
 
     private static class ContentFrame extends StackPane {

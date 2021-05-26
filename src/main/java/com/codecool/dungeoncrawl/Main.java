@@ -44,7 +44,6 @@ import java.util.Optional;
 
 public class Main extends Application {
     public static boolean halfCtrlSPressed = false;
-    Cell cell;
     GameMap map = MapLoader.loadMap("/map.txt");
 
     Mapmanager mapManager = new Mapmanager();
@@ -106,56 +105,14 @@ public class Main extends Application {
 
         Scene gameScene = new Scene(borderPane);
         //new scene for menu, to switch between the game and ui
-        Scene menuScene = new Scene(menu.createContent());
-        primaryStage.setScene(menuScene);
+        primaryStage.setScene(gameScene);
         textdialog(primaryStage);
         updatePlayerState();
         refresh();
         //scene.setOnKeyPressed(this::onKeyPressed);
-        if (primaryStage.getScene() != menuScene) {
-            gameScene.setOnKeyPressed(this::savekey);
-        } else {
-            menuScene.setOnKeyPressed(this::menuKey);
-        }
+        gameScene.setOnKeyPressed(this::savekey);
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
-    }
-
-    private void menuKey(KeyEvent event) {
-        int currentItem = menu.getCurrentItem();
-        if (event.getCode() == KeyCode.UP) {
-            if (currentItem > 0) {
-                menu.getMenuItem(menu.getCurrentItem()).setActive(false);
-                menu.getMenuItem(--currentItem).setActive(true);
-                menu.setCurrentItem(currentItem);
-            }
-        }
-
-        if (event.getCode() == KeyCode.DOWN) {
-            if (currentItem < menu.getMenuBox().getChildren().size() - 1) {
-                menu.getMenuItem(menu.getCurrentItem()).setActive(false);
-                menu.getMenuItem(++currentItem).setActive(true);
-                menu.setCurrentItem(currentItem);
-            }
-        }
-
-        if (event.getCode() == KeyCode.ENTER) {
-            Menu.MenuItem item = menu.getMenuItem(menu.getCurrentItem());
-            //read the menu text, 1.getteer for the text object 2.for reading the text object as string format
-            switch (item.getText().getText()) {
-                case "New game":
-                    System.out.println("new game");
-                    //TODO : switch scene to new game
-                    break;
-                case "Load game":
-                    System.out.println("load game");
-                    //TODO : switch scene to loaded game
-                    break;
-                case "Exit":
-                    System.exit(-1);
-                    break;
-            }
-        }
     }
 
     private void setScene(Scene scene) {
