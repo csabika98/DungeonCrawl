@@ -1,5 +1,7 @@
 package com.codecool.dungeoncrawl.model;
 
+import com.codecool.dungeoncrawl.logic.Items.Item;
+
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.List;
 public class GameState extends BaseModel {
     private Date savedAt;
     private String currentMap;
+    private List<Item> items = new ArrayList<>();
     private List<String> discoveredMaps = new ArrayList<>();
     private PlayerModel player;
 

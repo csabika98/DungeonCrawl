@@ -58,6 +58,7 @@ public class Main extends Application {
     Label damageLabel = new Label();
     Label shieldLabel = new Label();
 
+
     public static void main(String[] args) {
         launch(args);
     }
@@ -65,7 +66,10 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane ui = new GridPane();
-
+//        for(Skeleton skel : map.getSkeletons()){
+//            System.out.println(skel.getX());
+//            System.out.println(skel.getY());
+//        }
         ui.setPrefWidth(200);
         ui.setPadding(new Insets(10));
 
