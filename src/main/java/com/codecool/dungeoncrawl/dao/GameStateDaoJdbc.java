@@ -9,9 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameStateDaoJdbc implements GameStateDao {
+    private Date date;
+    private DataSource dataSource;
+
+    GameStateDaoJdbc(DataSource dataSource){
+        this.dataSource = dataSource;
+    }
     @Override
     public void add(GameState state) {
-
+        this.date = new Date(System.currentTimeMillis());
     }
 
     @Override

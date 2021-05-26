@@ -8,7 +8,7 @@ import java.util.Map;
 
 public class Player extends Actor {
     Inventory inventory;
-    private String name= "Kecske";
+    private String name;
     private int shieldDuration = 0;
     private String playerState = "player";
     private boolean isInvisible = false;
@@ -16,6 +16,10 @@ public class Player extends Actor {
     public Player(Cell cell) {
         super(cell);
         inventory = new Inventory();
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
