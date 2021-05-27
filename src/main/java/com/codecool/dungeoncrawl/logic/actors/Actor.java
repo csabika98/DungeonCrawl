@@ -48,6 +48,10 @@ public abstract class Actor implements Drawable {
         return health;
     }
 
+    public void loadHealt(int h){
+        health = h;
+    }
+
     public void setHealt(int amount) {
         health += amount;
         if (health > 10) {
@@ -65,6 +69,9 @@ public abstract class Actor implements Drawable {
 
     public int getDamage() {
         return damage;
+    }
+    public void loadDagame(int d){
+        damage = d;
     }
 
     public void setDamage(int amount) {

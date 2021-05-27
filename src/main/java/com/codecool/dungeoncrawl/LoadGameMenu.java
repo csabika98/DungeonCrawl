@@ -2,6 +2,7 @@ package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
 import com.codecool.dungeoncrawl.dao.PlayerDaoJdbc;
+import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.animation.ScaleTransition;
@@ -37,6 +38,20 @@ public class LoadGameMenu{
         players.clear();
     }
 
+    public int[] Attributes(int id) {
+        int health = 0;
+        int shield = 0;
+        int damage = 0;
+        for (PlayerModel player : players) {
+            if (player.getId() == id){
+                health = player.getHp();
+                shield = player.getShield();
+                damage = player.getDamage();
+            }
+        }
+        return new int[] {health,shield,damage};
+    }
+
     public int getCurrentItem() {
         return currentItem;
     }
@@ -61,7 +76,7 @@ public class LoadGameMenu{
         bg.setFill(bgPattern);
         bg.setOpacity(0.2);
 
-        MenuItem itemExit = new MenuItem("Back");
+        MenuItem itemExit = new MenuItem("Back", 9999);
 
         menuBox = new VBox(10);
         menuBox.setAlignment(Pos.TOP_CENTER);
@@ -75,8 +90,8 @@ public class LoadGameMenu{
             System.out.println(e);
         }
         for (PlayerModel player: players) {
-        MenuItem save = new MenuItem(player.getPlayerName());
-        menuBox.getChildren().add(save);
+            MenuItem save = new MenuItem(player.getPlayerName(),player.getId());
+            menuBox.getChildren().add(save);
         }
         menuBox.getChildren().add(itemExit);
 
@@ -120,11 +135,13 @@ public class LoadGameMenu{
         private ImageView c1 = new ImageView(new Image("menu_left_arrow.png", 50, 50, false, false));
         private ImageView c2 = new ImageView(new Image("menu_right_arrow.png", 50, 50, false, false));
         private Text text;
+        private int playerId;
 
-        public MenuItem(String name) {
+        public MenuItem(String name,int id) {
             super(40);
             setAlignment(Pos.CENTER);
 
+            playerId = id;
             text = new Text(name);
             //load custom font from font folder
             text.setFont(Font.loadFont(Objects.requireNonNull(App.class.getResource("/fonts/Minecraft.ttf")).toExternalForm(), 0));
@@ -138,6 +155,9 @@ public class LoadGameMenu{
         public Text getText() {
             //get current pointing button text object to read the text
             return text;
+        }
+        public int getPlayerId(){
+            return playerId;
         }
 
         public void setActive(boolean b) {

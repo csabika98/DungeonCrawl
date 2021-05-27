@@ -91,6 +91,7 @@ public class Main extends Application {
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
     }
+
     public void menuKey(KeyEvent event) {
         int currentItem = menu.getCurrentItem();
         if (event.getCode() == KeyCode.UP) {
@@ -118,7 +119,7 @@ public class Main extends Application {
                 case "New game":
                     currentStage.hide();
                     Stage newStage = new Stage();
-                    newGame(newStage);
+                    newGame(newStage,null);
                     break;
                 case "Load game":
                     currentStage.hide();
@@ -153,18 +154,20 @@ public class Main extends Application {
         }
 
         if (event.getCode() == KeyCode.ENTER) {
-            LoadGameMenu.MenuItem item = load.getMenuItem(currentItem);
+            LoadGameMenu.MenuItem player = load.getMenuItem(currentItem);
             //read the menu text, 1.getteer for the text object 2.for reading the text object as string format
-            switch (item.getText().getText()) {
-                case "Back":
-                    currentStage.hide();
-                    load.ClearList();
-                    Stage menuStage = new Stage();
-                    menuScene(menuStage);
-                    break;
+            if (player.getText().getText().equals("Back")) {
+                currentStage.hide();
+                Stage sceneMenu = new Stage();
+                menuScene(sceneMenu);
+            } else {
+                currentStage.hide();
+                Stage gameStage = new Stage();
+                newGame(gameStage,player);
             }
         }
     }
+
 
     private void menuScene(Stage newStage) {
         currentStage = newStage;
@@ -183,8 +186,14 @@ public class Main extends Application {
         newStage.show();
     }
 
-    private void newGame(Stage newStage) {
-        textdialog(newStage);
+    private void newGame(Stage newStage, LoadGameMenu.MenuItem player) {
+        if (player == null){
+            textdialog(newStage);
+        }else{
+            int playerId = player.getPlayerId();
+            int[] playerAttributes = load.Attributes(playerId);
+            loadPlayer(playerAttributes);
+        }
         currentStage = newStage;
         GridPane ui = new GridPane();
 //        for(Skeleton skel : map.getSkeletons()){
@@ -223,6 +232,13 @@ public class Main extends Application {
 
     }
 
+    private void loadPlayer(int[] playerAttributes) {
+        map.getPlayer().setShieldDuration(playerAttributes[1]);
+        map.getPlayer().loadHealt(playerAttributes[0]);
+        map.getPlayer().loadDagame(playerAttributes[2]);
+        updatePlayerState();
+    }
+
     public void savekey(KeyEvent keyEvent) {
         if (keyEvent.getCode().getName().equals("W")) {
             map.getPlayer().move(0, -1, map.getPlayer().getisInvisible());
@@ -243,6 +259,7 @@ public class Main extends Application {
         if (keyEvent.getCode().getName().equals("E")) {
             if (map.getPlayer().getCell().getItem() != null) {
                 pickItem(map.getPlayer().getCell().getItem());
+                updatePlayerState();
             } else {
                 checkChest();
             }
@@ -250,7 +267,6 @@ public class Main extends Application {
         if (keyEvent.getCode().getName().equals("Q")) {
             map.getPlayer().setisInvisible(!map.getPlayer().getisInvisible());
             isLight = !isLight;
-            updatePlayerState();
             refresh();
         }
         if (keyEvent.getCode().getName().equals("R")) {

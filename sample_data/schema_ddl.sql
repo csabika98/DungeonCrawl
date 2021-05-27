@@ -12,6 +12,7 @@ CREATE TABLE public.player (
     player_name text NOT NULL,
     hp integer NOT NULL,
     shield integer NOT NULL,
+    damage integer NOT NULL,
     x integer NOT NULL,
     y integer NOT NULL
 );
