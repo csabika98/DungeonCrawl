@@ -38,18 +38,13 @@ public class LoadGameMenu{
         players.clear();
     }
 
-    public int[] Attributes(int id) {
-        int health = 0;
-        int shield = 0;
-        int damage = 0;
+    public PlayerModel Attributes(int id) {
         for (PlayerModel player : players) {
             if (player.getId() == id){
-                health = player.getHp();
-                shield = player.getShield();
-                damage = player.getDamage();
+                return player;
             }
         }
-        return new int[] {health,shield,damage};
+        return null;
     }
 
     public int getCurrentItem() {

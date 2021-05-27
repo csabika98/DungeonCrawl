@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.IntStream;
 
 public class MapLoader {
-    public static GameMap loadMap(String mapName) {
+    public static GameMap loadMap(String mapName, int xpos, int ypos) {
         Random rand = new Random();
         InputStream is = MapLoader.class.getResourceAsStream(mapName);
         Scanner scanner = new Scanner(is);
@@ -38,7 +38,7 @@ public class MapLoader {
                 if (x < line.length()) {
                     Cell cell = map.getCell(x, y);
                     // add player
-                    if (x==30 && y==22){
+                    if (x==xpos && y==ypos){
                         cell.setType(CellType.FLOOR);
                         map.setPlayer(new Player(cell));
                         // add skeletons

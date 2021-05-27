@@ -15,6 +15,7 @@ import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 
 import com.codecool.dungeoncrawl.logic.Mapmanager;
 
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -44,9 +45,8 @@ import java.util.Optional;
 
 public class Main extends Application {
     public static boolean halfCtrlSPressed = false;
-    GameMap map = MapLoader.loadMap("/map.txt");
     Stage currentStage;
-
+    GameMap map = MapLoader.loadMap("/map.txt",30,22);
     Menu menu = new Menu();
     LoadGameMenu load = new LoadGameMenu();
 
@@ -119,7 +119,7 @@ public class Main extends Application {
                 case "New game":
                     currentStage.hide();
                     Stage newStage = new Stage();
-                    newGame(newStage,null);
+                    newGame(newStage, null);
                     break;
                 case "Load game":
                     currentStage.hide();
@@ -163,7 +163,7 @@ public class Main extends Application {
             } else {
                 currentStage.hide();
                 Stage gameStage = new Stage();
-                newGame(gameStage,player);
+                newGame(gameStage, player);
             }
         }
     }
@@ -187,12 +187,15 @@ public class Main extends Application {
     }
 
     private void newGame(Stage newStage, LoadGameMenu.MenuItem player) {
-        if (player == null){
+
+        if (player == null) {
+            map = MapLoader.loadMap("/map.txt",30,22);
             textdialog(newStage);
-        }else{
+        } else {
             int playerId = player.getPlayerId();
-            int[] playerAttributes = load.Attributes(playerId);
-            loadPlayer(playerAttributes);
+            PlayerModel playerAttribute = load.Attributes(playerId);
+            loadMap(playerAttribute);
+            loadPlayer(playerAttribute);
         }
         currentStage = newStage;
         GridPane ui = new GridPane();
@@ -232,11 +235,17 @@ public class Main extends Application {
 
     }
 
-    private void loadPlayer(int[] playerAttributes) {
-        map.getPlayer().setShieldDuration(playerAttributes[1]);
-        map.getPlayer().loadHealt(playerAttributes[0]);
-        map.getPlayer().loadDagame(playerAttributes[2]);
+    private void loadMap(PlayerModel playerAttribute) {
+        map = MapLoader.loadMap("/map.txt", playerAttribute.getX(),playerAttribute.getY());
+
+    }
+
+    private void loadPlayer(PlayerModel player) {
+        map.getPlayer().setShieldDuration(player.getShield());
+        map.getPlayer().loadHealt(player.getHp());
+        map.getPlayer().loadDagame(player.getDamage());
         updatePlayerState();
+        refresh();
     }
 
     public void savekey(KeyEvent keyEvent) {
@@ -267,6 +276,7 @@ public class Main extends Application {
         if (keyEvent.getCode().getName().equals("Q")) {
             map.getPlayer().setisInvisible(!map.getPlayer().getisInvisible());
             isLight = !isLight;
+            updatePlayerState();
             refresh();
         }
         if (keyEvent.getCode().getName().equals("R")) {

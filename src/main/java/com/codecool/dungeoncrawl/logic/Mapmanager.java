@@ -13,6 +13,6 @@ public class Mapmanager {
     }
 
     public void setMap(String mapName) {
-        map = MapLoader.loadMap(mapName);
+        map = MapLoader.loadMap(mapName,30,22);
     }
 }
