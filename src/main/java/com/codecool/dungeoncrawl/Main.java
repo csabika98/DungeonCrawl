@@ -45,9 +45,10 @@ import java.util.Optional;
 public class Main extends Application {
     public static boolean halfCtrlSPressed = false;
     GameMap map = MapLoader.loadMap("/map.txt");
+    Stage currentStage;
 
-    Mapmanager mapManager = new Mapmanager();
     Menu menu = new Menu();
+    LoadGameMenu load = new LoadGameMenu();
 
     ListView<String> inventory = new ListView();
     public static double colr;
@@ -67,6 +68,124 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+
+
+        //handle window closing by hand
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent e) {
+                Platform.exit();
+                System.exit(0);
+            }
+        });
+
+
+        Scene menuScene = new Scene(menu.createContent());
+        //new scene for menu, to switch between the game and ui
+        primaryStage.setScene(menuScene);
+        updatePlayerState();
+        refresh();
+
+        menuScene.setOnKeyPressed(this::menuKey);
+        currentStage = primaryStage;
+        primaryStage.setTitle("Dungeon Crawl");
+        primaryStage.show();
+    }
+    public void menuKey(KeyEvent event) {
+        int currentItem = menu.getCurrentItem();
+        if (event.getCode() == KeyCode.UP) {
+            if (currentItem > 0) {
+                menu.getMenuItem(currentItem).setActive(false);
+                menu.getMenuItem(--currentItem).setActive(true);
+                menu.getMenuItem(currentItem);
+                menu.setCurrentItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.DOWN) {
+            if (currentItem < menu.getMenuBox().getChildren().size() - 1) {
+                menu.getMenuItem(currentItem).setActive(false);
+                menu.getMenuItem(++currentItem).setActive(true);
+                menu.getMenuItem(currentItem);
+                menu.setCurrentItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.ENTER) {
+            Menu.MenuItem item = menu.getMenuItem(currentItem);
+            //read the menu text, 1.getteer for the text object 2.for reading the text object as string format
+            switch (item.getText().getText()) {
+                case "New game":
+                    currentStage.hide();
+                    Stage newStage = new Stage();
+                    newGame(newStage);
+                    break;
+                case "Load game":
+                    currentStage.hide();
+                    Stage loadStage = new Stage();
+                    loadGame(loadStage);
+                    break;
+                case "Exit":
+                    System.exit(-1);
+                    break;
+            }
+        }
+    }
+
+    public void loadKey(KeyEvent event) {
+        int currentItem = load.getCurrentItem();
+        if (event.getCode() == KeyCode.UP) {
+            if (currentItem > 0) {
+                load.getMenuItem(currentItem).setActive(false);
+                load.getMenuItem(--currentItem).setActive(true);
+                load.getMenuItem(currentItem);
+                load.setCurrentItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.DOWN) {
+            if (currentItem < load.getMenuBox().getChildren().size() - 1) {
+                load.getMenuItem(currentItem).setActive(false);
+                load.getMenuItem(++currentItem).setActive(true);
+                load.getMenuItem(currentItem);
+                load.setCurrentItem(currentItem);
+            }
+        }
+
+        if (event.getCode() == KeyCode.ENTER) {
+            LoadGameMenu.MenuItem item = load.getMenuItem(currentItem);
+            //read the menu text, 1.getteer for the text object 2.for reading the text object as string format
+            switch (item.getText().getText()) {
+                case "Back":
+                    currentStage.hide();
+                    load.ClearList();
+                    Stage menuStage = new Stage();
+                    menuScene(menuStage);
+                    break;
+            }
+        }
+    }
+
+    private void menuScene(Stage newStage) {
+        currentStage = newStage;
+        Scene menuScene = new Scene(menu.createContent());
+        menuScene.setOnKeyPressed(this::menuKey);
+        newStage.setScene(menuScene);
+        newStage.show();
+    }
+
+
+    private void loadGame(Stage newStage) {
+        currentStage = newStage;
+        Scene loadScene = new Scene(load.createContent());
+        loadScene.setOnKeyPressed(this::loadKey);
+        newStage.setScene(loadScene);
+        newStage.show();
+    }
+
+    private void newGame(Stage newStage) {
+        textdialog(newStage);
+        currentStage = newStage;
         GridPane ui = new GridPane();
 //        for(Skeleton skel : map.getSkeletons()){
 //            System.out.println(skel.getX());
@@ -97,72 +216,12 @@ public class Main extends Application {
         borderPane.setCenter(canvas);
         borderPane.setRight(ui);
 
-        //handle window closing by hand
-        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-            @Override
-            public void handle(WindowEvent e) {
-                Platform.exit();
-                System.exit(0);
-            }
-        });
-
-
         Scene gameScene = new Scene(borderPane);
-        //new scene for menu, to switch between the game and ui
-        primaryStage.setScene(gameScene);
-        textdialog(primaryStage);
-        updatePlayerState();
-        refresh();
-        //scene.setOnKeyPressed(this::onKeyPressed);
+        newStage.setScene(gameScene);
         gameScene.setOnKeyPressed(this::savekey);
-        primaryStage.setTitle("Dungeon Crawl");
-        primaryStage.show();
-    }
-
-    private void setScene(Scene scene) {
+        newStage.show();
 
     }
-
-    /*private void onKeyPressed(KeyEvent keyEvent) {
-        switch (keyEvent.getCode()) {
-            case W:
-                map.getPlayer().move(0, -1, map.getPlayer().getisInvisible());
-                refresh();
-                break;
-            case S:
-                map.getPlayer().move(0, 1, map.getPlayer().getisInvisible());
-                refresh();
-                break;
-            case A:
-                map.getPlayer().move(-1, 0, map.getPlayer().getisInvisible());
-                refresh();
-                break;
-            case D:
-                map.getPlayer().move(1, 0, map.getPlayer().getisInvisible());
-                refresh();
-                break;
-            case E:
-                if (map.getPlayer().getCell().getItem() != null) {
-                    pickItem(map.getPlayer().getCell().getItem());
-                } else {
-                    checkChest();
-                }
-                break;
-            case Q:
-                map.getPlayer().setisInvisible(!map.getPlayer().getisInvisible());
-                isLight = !isLight;
-                updatePlayerState();
-                refresh();
-                break;
-            case R:
-                checkEnemy();
-                refresh();
-                break;
-
-        }
-    }
-
-     */
 
     public void savekey(KeyEvent keyEvent) {
         if (keyEvent.getCode().getName().equals("W")) {

@@ -1,5 +1,9 @@
 package com.codecool.dungeoncrawl;
 
+import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
+import com.codecool.dungeoncrawl.dao.PlayerDaoJdbc;
+import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.animation.ScaleTransition;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -17,12 +21,21 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class Menu{
+public class LoadGameMenu{
+    GameDatabaseManager gdm = new GameDatabaseManager();
+    List<PlayerModel> players = new ArrayList<>();
 
     private VBox menuBox;
     private int currentItem = 0;
+
+    public void ClearList() {
+        players.clear();
+    }
 
     public int getCurrentItem() {
         return currentItem;
@@ -47,22 +60,26 @@ public class Menu{
         ImagePattern bgPattern = new ImagePattern(texturePattern,10,10, 20, 20, false);
         bg.setFill(bgPattern);
         bg.setOpacity(0.2);
-        ContentFrame frame = new ContentFrame(createIconContent());
 
-        HBox hbox = new HBox(15, frame);
+        MenuItem itemExit = new MenuItem("Back");
 
-        hbox.setTranslateX(350);
-        hbox.setTranslateY(50);
-
-        MenuItem itemExit = new MenuItem("Exit");
-
-        menuBox = new VBox(10,
-                new MenuItem("New game"),
-                new MenuItem("Load game"),
-                itemExit);
+        menuBox = new VBox(10);
         menuBox.setAlignment(Pos.TOP_CENTER);
-        menuBox.setTranslateX(255);
-        menuBox.setTranslateY(300);
+        menuBox.setTranslateX(280);
+        menuBox.setTranslateY(50);
+
+        try {
+            gdm.setup();
+            players.addAll(gdm.getPlayers());
+        } catch (Exception e) {
+            System.out.println(e);
+        }
+        for (PlayerModel player: players) {
+        MenuItem save = new MenuItem(player.getPlayerName());
+        menuBox.getChildren().add(save);
+        }
+        menuBox.getChildren().add(itemExit);
+
 
         Text about = new Text("Dungeon Crawler");
         about.setTranslateX(50);
@@ -74,23 +91,8 @@ public class Menu{
 
         getMenuItem(0).setActive(true);
 
-        root.getChildren().addAll(bgBlack,bg, hbox, menuBox, about);
+        root.getChildren().addAll(bgBlack,bg, menuBox, about);
         return root;
-    }
-
-    private Node createIconContent() {
-        Image icon = new Image("icon.png");
-        ImageView imageView = new ImageView(icon);
-
-        ScaleTransition st = new ScaleTransition(Duration.millis(2000), imageView);
-        st.setByX(.3);
-        st.setByY(.3);
-        st.setCycleCount(ScaleTransition.INDEFINITE);
-        st.setAutoReverse(true);
-
-        st.play();
-
-        return imageView;
     }
 
     public MenuItem getMenuItem(int index) {

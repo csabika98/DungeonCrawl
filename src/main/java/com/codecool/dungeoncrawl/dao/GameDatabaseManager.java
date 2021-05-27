@@ -6,6 +6,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 
 public class GameDatabaseManager {
     private PlayerDao playerDao;
@@ -18,6 +19,10 @@ public class GameDatabaseManager {
     public void savePlayer(Player player) {
         PlayerModel model = new PlayerModel(player);
         playerDao.add(model);
+    }
+
+    public List<PlayerModel> getPlayers(){
+        return playerDao.getAll();
     }
 
     private DataSource connect() throws SQLException {

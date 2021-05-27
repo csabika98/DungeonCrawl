@@ -24,6 +24,14 @@ public class PlayerModel extends BaseModel {
 
     }
 
+    public PlayerModel(int id, String playerName, int hp, int shield, int x,int y) {
+        this.playerName = playerName;
+        this.x = x;
+        this.y = y;
+        this.shield = shield;
+        this.hp = hp;
+    }
+
     public String getPlayerName() {
         return playerName;
     }
