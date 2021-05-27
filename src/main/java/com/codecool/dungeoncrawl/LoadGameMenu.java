@@ -10,6 +10,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.GaussianBlur;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -75,7 +76,7 @@ public class LoadGameMenu{
 
         menuBox = new VBox(10);
         menuBox.setAlignment(Pos.TOP_CENTER);
-        menuBox.setTranslateX(280);
+        menuBox.setTranslateX(220);
         menuBox.setTranslateY(50);
 
         try {
@@ -159,6 +160,7 @@ public class LoadGameMenu{
             c1.setVisible(b);
             c2.setVisible(b);
             text.setFill(b ? Color.WHITE : Color.GREY);
+
         }
     }
 }
